@@ -1,63 +1,123 @@
-INC=/usr/include
-##
-## Makefile for MiniLibX in /home/boulon/work/c/raytraceur/minilibx
-## 
-## Made by Olivier Crouzet
-## Login   <ol@epitech.net>
-## 
-## Started on  Tue Oct  5 15:56:43 2004 Olivier Crouzet
-## Last update Tue May 15 15:41:20 2007 Olivier Crouzet
-##
+CC									=	cc
+CFLAGS							=	-Wall -Wextra -Werror -g
+VFLAGS							=	--leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt
+AR									=	ar rcs
+RM									=	rm -f
+RM_DIR							=	rm -rf
 
-## Please use configure script
+$(eval CURR_DIR			=	$(shell pwd))
 
+BIN_DIR							=	./bin
+NAME								=	$(BIN_DIR)/screensaver
 
-VFLAGS		= --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt
-UNAME		= $(shell uname)
-CC			= gcc
-ifeq ($(UNAME),FreeBSD)
-	CC		= clang
-endif
+LIB_DIR							= ./lib
 
-NAME		= test
-LIBFT_DIR	= libft
-LIBFTA		= libft/lib/libft.a
+LIBFT_DIR						=	$(LIB_DIR)/libft
+LIBFT_A							=	$(LIBFT_DIR)/lib/libft.a
 
-SRC			= test.c
+MLX_DIR							=	$(LIB_DIR)/mlx_linux
+LIBMLX_A						=	$(MLX_DIR)/libmlx.a
 
-OBJ_DIR 	= obj
-OBJ	= $(addprefix $(OBJ_DIR)/,$(SRC:%.c=%.o))
-#CFLAGS		= -Wall -Wextra -Werror -g3 -O3 -I$(INC)
-CFLAGS		= -g3 -O3 -I$(INC)
+SRCS_DIR						=	./srcs
+SRCS_COLORS_DIR			=	$(SRCS_DIR)/colors
+SRCS_CONTROLS_DIR		=	$(SRCS_DIR)/controls
+SRCS_GRAPHICS_DIR		=	$(SRCS_DIR)/graphics
+SRCS_RENDERERS_DIR	=	$(SRCS_DIR)/renderers
+ALL_SRCS_DIRS				=	$(SRCS_DIR) \
+											$(SRCS_COLORS_DIR) \
+											$(SRCS_CONTROLS_DIR) \
+											$(SRCS_GRAPHICS_DIR) \
+											$(SRCS_RENDERERS_DIR)
+
+OBJS_DIR						=	./obj
+
+SRCS_FILES					=	\
+				$(addprefix $(SRCS_DIR)/, \
+					cleanup.c \
+					init.c \
+					main.c \
+					show_error.c \
+				) \
+				$(addprefix $(SRCS_COLORS_DIR)/, \
+					change_color.c \
+					color_2_argb.c \
+					color_2_int.c \
+					color_add.c \
+				) \
+				$(addprefix $(SRCS_CONTROLS_DIR)/, \
+					is_control_key.c \
+					key_handler.c \
+					mouse_click_handler.c \
+					set_key_dir.c \
+				) \
+				$(addprefix $(SRCS_GRAPHICS_DIR)/, \
+					put_cross.c \
+					put_fps.c \
+					put_pixel.c \
+				) \
+				$(addprefix $(SRCS_RENDERERS_DIR)/, \
+					fix_if_out_of_bound.c \
+					render_one_pixel_at_a_time.c \
+					render_one_pixel_at_a_time_in_a_direction_loop.c \
+					render_small_or_large_frame_at_a_time.c \
+					set_renderer.c \
+				)
+
+OBJS_FILES					=	$(subst $(SRCS_DIR)/,$(OBJS_DIR)/,$(SRCS_FILES:.c=.o))
 
 all: $(NAME)
-	$(MAKE) -C mlx_linux
 
-$(OBJ_DIR)/%.o: %.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
+$(NAME): $(OBJS_FILES) $(LIBFT_A) $(LIBMLX_A) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $^ -L$(MLX_DIR) -lmlx_Linux -L/usr/lib -I$(MLX_DIR) -lXext -lX11 -lm -lz -o $@
 
-$(NAME): $(OBJ) $(LIBFTA)
-	$(CC) $(OBJ) $(LIBFTA) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
+test:
+	@echo $(SRCS_DIR)
+	@echo $(SRCS_FILES)
+	@ls -la $(SRCS_FILES)
+	@echo $(OBJS_DIR)
+	@echo $(OBJS_FILES)
+	@-ls -la $(OBJS_FILES)
+	@echo CURR_DIR=\"$(CURR_DIR)\"
 
-$(LIBFTA):
+$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c | $(OBJS_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+$(OBJS_DIR):
+	mkdir -p $(OBJS_DIR) \
+		$(subst $(SRCS_DIR)/,$(OBJS_DIR)/,$(ALL_SRCS_DIRS))
+
+$(LIBFT_A):
 	$(MAKE) -C $(LIBFT_DIR)
 
-check: all
-	@test/run_tests.sh
+$(LIBMLX_A):
+	cd $(MLX_DIR); ./configure
+	$(MAKE) -C $(MLX_DIR)
 
-show:
-	@printf "NAME  		: $(NAME)\n"
-	@printf "NAME_UNAME	: $(NAME_UNAME)\n"
-	@printf "CC		: $(CC)\n"
-	@printf "CFLAGS		: $(CFLAGS)\n"
-	@printf "SRC		:\n	$(SRC)\n"
-	@printf "OBJ		:\n	$(OBJ)\n"
+valgrind:
+	valgrind $(VFLAGS) ./$(NAME)
 
 clean:
-	rm -rf $(OBJ_DIR)/ $(NAME)
+ifneq ("$(OBJS_DIR)",".")
+	$(RM_DIR) $(OBJS_DIR)
+else
+	@echo Refusing to delete/clear OBJS_DIR as it is \"$(OBJS_DIR)\"\ !
+endif
+	$(MAKE) -C $(LIBFT_DIR) clean
+	cd $(MLX_DIR); ./configure clean
 
-valgrind: $(NAME)
-	valgrind VFLAGS ./$(NAME)
+fclean: clean
+ifneq ("$(BIN_DIR)",".")
+	$(RM_DIR) $(BIN_DIR)
+else
+	@echo Refusing to delete/clear BIN_DIR as it is \"$(BIN_DIR)\"\ !
+endif
+	$(RM) $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
+#	$(MAKE) -C $(MLX_DIR) fclean
 
-.PHONY: all check show clean
+re: fclean all
+
+.PHONY: all clean fclean re

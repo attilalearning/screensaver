@@ -1,8 +1,7 @@
-*.out
-mlx_linux
-mlx_linux/*
 obj
 obj/*
-test
-libft
-libft/*
+bin
+bin/*
+lib/libft/*
+lib/mlx_linux/*
+valgrind-out.txt
