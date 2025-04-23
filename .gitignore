@@ -1,7 +1,9 @@
 obj
 obj/*
 bin
-bin/*
+bin/*i
+lib/libft
 lib/libft/*
+lib/mlx_linux
 lib/mlx_linux/*
 valgrind-out.txt

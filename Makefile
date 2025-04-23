@@ -67,7 +67,7 @@ OBJS_FILES					=	$(subst $(SRCS_DIR)/,$(OBJS_DIR)/,$(SRCS_FILES:.c=.o))
 
 all: $(NAME)
 
-$(NAME): $(OBJS_FILES) $(LIBFT_A) $(LIBMLX_A) | $(BIN_DIR)
+$(NAME): $(LIBFT_A) $(LIBMLX_A) $(OBJS_FILES) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $^ -L$(MLX_DIR) -lmlx_Linux -L/usr/lib -I$(MLX_DIR) -lXext -lX11 -lm -lz -o $@
 
 test:
@@ -89,12 +89,16 @@ $(OBJS_DIR):
 	mkdir -p $(OBJS_DIR) \
 		$(subst $(SRCS_DIR)/,$(OBJS_DIR)/,$(ALL_SRCS_DIRS))
 
-$(LIBFT_A):
+$(LIBFT_A): | $(LIB_DIR)
 	$(MAKE) -C $(LIBFT_DIR)
 
-$(LIBMLX_A):
+$(LIBMLX_A): | $(LIB_DIR)
 	cd $(MLX_DIR); ./configure
 	$(MAKE) -C $(MLX_DIR)
+
+$(LIB_DIR):
+	mkdir -p $(LIBFT_DIR) $(MLX_DIR)
+	git submodule update --init --recursive
 
 valgrind:
 	valgrind $(VFLAGS) ./$(NAME)

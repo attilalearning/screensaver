@@ -1,13 +1,13 @@
 #ifndef SCREENSAVER_H
 # define SCREENSAVER_H
 
-# include "../mlx_linux/mlx.h"
-# include "../mlx_linux/mlx_int.h"
+# include "../lib/mlx_linux/mlx.h"
+# include "../lib/mlx_linux/mlx_int.h"
 # include <math.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include "../libft/libft.h"
+# include "../lib/libft/libft.h"
 
 # ifndef WW
 #  define WW 792
