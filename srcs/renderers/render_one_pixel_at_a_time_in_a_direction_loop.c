@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   render_one_pixel_at_a_time_in_a_direction_loo      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aistok <aistok@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/24 11:28:14 by aistok            #+#    #+#             */
+/*   Updated: 2025/04/24 12:17:20 by aistok           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/screensaver.h"
 
 static void	draw_and_update(t_my_data *md, int *color)
@@ -6,8 +18,7 @@ static void	draw_and_update(t_my_data *md, int *color)
 	mlx_put_image_to_window(md->mlx, md->win, md->canvas.img, 0, 0);
 }
 
-static void
-change_direction(int *new_dirx, int *new_diry)
+static void	change_direction(int *new_dirx, int *new_diry)
 {
 	static int	last_dirx = 0;
 	static int	last_diry = 0;
@@ -38,8 +49,9 @@ int	render_one_pixel_at_a_time_in_a_direction_loop(void *md_ptr)
 	static int		color = 0x00800000;
 	static int		loops = 0;
 	static int		max_loops = 100;
-	t_my_data		*md = (t_my_data *)md_ptr;
+	t_my_data		*md;
 
+	md = (t_my_data *)md_ptr;
 	if (md->pd == d_RANDOM)
 	{
 		if (loops > max_loops)

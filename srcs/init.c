@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aistok <aistok@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/24 11:27:09 by aistok            #+#    #+#             */
+/*   Updated: 2025/04/24 11:35:17 by aistok           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/screensaver.h"
 
 static int	init_graphics(t_my_data *md, int window_w, int window_h)
@@ -49,7 +61,9 @@ int	init(t_my_data *md)
 	if (init_graphics(md, WW, WH) != eOK)
 		return (md->exit_code);
 	md->canvas.img = mlx_new_image(md->mlx, md->ww, md->wh);
-	md->canvas.addr = mlx_get_data_addr(md->canvas.img, &md->canvas.bpp, &md->canvas.ll, &md->canvas.endian);
+	md->canvas.addr = mlx_get_data_addr(
+			md->canvas.img, &md->canvas.bpp,
+			&md->canvas.ll, &md->canvas.endian);
 	md->px = md->ww / 2;
 	md->py = md->wh / 2;
 	md->pd = d_RANDOM;
@@ -66,4 +80,3 @@ int	init(t_my_data *md)
 	md->rfunc[2] = render_one_pixel_at_a_time_in_a_direction_loop;
 	return (eOK);
 }
-

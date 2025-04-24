@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mouse_click_handler.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aistok <aistok@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/24 11:29:50 by aistok            #+#    #+#             */
+/*   Updated: 2025/04/24 12:14:13 by aistok           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/screensaver.h"
 
 int	mouse_click_handler(int mbutt, int x, int y, void *md_ptr)
 {
-	t_my_data *md;
+	t_my_data	*md;
 
 	md = (t_my_data *)md_ptr;
 	if (mbutt == m_ScrollUp)
@@ -20,4 +32,3 @@ int	mouse_click_handler(int mbutt, int x, int y, void *md_ptr)
 	printf("Mouse click @ %d x %d <-- button %d\n", x, y, mbutt);
 	return (0);
 }
-

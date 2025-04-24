@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   set_key_dir.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aistok <aistok@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/24 11:30:00 by aistok            #+#    #+#             */
+/*   Updated: 2025/04/24 12:13:18 by aistok           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/screensaver.h"
 
 void	set_key_dir(t_my_data *md, int *dirx, int *diry)
@@ -11,4 +23,3 @@ void	set_key_dir(t_my_data *md, int *dirx, int *diry)
 	else if (md->keyb == k_left || md->keyb == k_a)
 		*dirx = -1;
 }
-

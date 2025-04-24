@@ -70,15 +70,6 @@ all: $(NAME)
 $(NAME): $(LIBFT_A) $(LIBMLX_A) $(OBJS_FILES) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $^ -L$(MLX_DIR) -lmlx_Linux -L/usr/lib -I$(MLX_DIR) -lXext -lX11 -lm -lz -o $@
 
-test:
-	@echo $(SRCS_DIR)
-	@echo $(SRCS_FILES)
-	@ls -la $(SRCS_FILES)
-	@echo $(OBJS_DIR)
-	@echo $(OBJS_FILES)
-	@-ls -la $(OBJS_FILES)
-	@echo CURR_DIR=\"$(CURR_DIR)\"
-
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c | $(OBJS_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -109,8 +100,12 @@ ifneq ("$(OBJS_DIR)",".")
 else
 	@echo Refusing to delete/clear OBJS_DIR as it is \"$(OBJS_DIR)\"\ !
 endif
-	$(MAKE) -C $(LIBFT_DIR) clean
-	cd $(MLX_DIR); ./configure clean
+	if [ -d $(LIBFT_DIR) ]; then \
+	$(MAKE) -C $(LIBFT_DIR) clean; \
+	fi
+	if [ -d $(MLX_DIR) ]; then \
+	cd $(MLX_DIR); ./configure clean; \
+	fi
 
 fclean: clean
 ifneq ("$(BIN_DIR)",".")
@@ -119,7 +114,9 @@ else
 	@echo Refusing to delete/clear BIN_DIR as it is \"$(BIN_DIR)\"\ !
 endif
 	$(RM) $(NAME)
-	$(MAKE) -C $(LIBFT_DIR) fclean
+	if [ -d $(LIBFT_DIR) ]; then \
+	$(MAKE) -C $(LIBFT_DIR) fclean; \
+	fi
 #	$(MAKE) -C $(MLX_DIR) fclean
 
 re: fclean all

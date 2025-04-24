@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   screensaver.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aistok <aistok@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/24 10:51:31 by aistok            #+#    #+#             */
+/*   Updated: 2025/04/24 11:38:47 by aistok           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SCREENSAVER_H
 # define SCREENSAVER_H
 
@@ -56,11 +68,18 @@ enum e_direction
 	d_KEYBOARD
 };
 
+enum e_time
+{
+	start_t = 0,
+	curr_t,
+	delta_t
+};
+
 /*
  *	bpp - bit per pixel
  *	ll	- line length
  */
-typedef struct	s_canvas
+typedef struct s_canvas
 {
 	void	*img;
 	char	*addr;
@@ -71,7 +90,7 @@ typedef struct	s_canvas
 	int		h;
 }	t_canvas;
 
-typedef struct	s_aRGB
+typedef struct s_aRGB
 {
 	unsigned char	a;
 	unsigned char	r;
@@ -79,13 +98,13 @@ typedef struct	s_aRGB
 	unsigned char	b;
 }	t_aRGB;
 
-typedef struct	s_point
+typedef struct s_point
 {
 	double	x;
 	double	y;
 }	t_point;
 
-typedef int(*render_func)(void *md);
+typedef int	(*t_render_func)(void *md);
 
 /*
  *	ww - window width
@@ -96,60 +115,59 @@ typedef int(*render_func)(void *md);
  *	tx - text's starting x coordinate
  *	ty - text's starting y coordinate
  */
-typedef struct	s_my_data
+typedef struct s_my_data
 {
-	int			ww;
-	int			wh;
-	void		*mlx;
-	void		*win;
-	t_canvas	canvas;
-	int			px;
-	int			py;
-	int			dirx;
-	int			diry;
-	int			pd;
-	int			exit_code;
-	int			keyb;
-	int			tx;
-	int			ty;
-	t_canvas	c_size[2];
-	int			curr_size;
-	render_func		rfunc[3];
+	int				ww;
+	int				wh;
+	void			*mlx;
+	void			*win;
+	t_canvas		canvas;
+	int				px;
+	int				py;
+	int				dirx;
+	int				diry;
+	int				pd;
+	int				exit_code;
+	int				keyb;
+	int				tx;
+	int				ty;
+	t_canvas		c_size[2];
+	int				curr_size;
+	t_render_func	rfunc[3];
 }	t_my_data;
 
-
 /* init.c */
-int	    init(t_my_data *md);
-void	  make_rectangle(t_canvas *cvs, int aRGB);
+int		init(t_my_data *md);
+void	make_rectangle(t_canvas *cvs, int aRGB);
 
 /* cleanup.c */
-int	    cleanup(t_my_data *md);
+int		cleanup(t_my_data *md);
 
 /* show_error.c */
-void	  show_error(t_my_data *md);
+void	show_error(t_my_data *md);
 
 /* colors dir */
-int	    change_color(int *aRGB);
+int		change_color(int *aRGB);
 t_aRGB	color_2_argb(int aRGB);
-int	    color_2_int(t_aRGB aRGB);
-int	    color_add(int aRGB, t_aRGB values);
+int		color_2_int(t_aRGB aRGB);
+int		color_add(int aRGB, t_aRGB values);
 
 /* controls dir */
-int	    is_control_key(int key);
-int	    key_handler(int key, t_my_data *md);
-int	    mouse_click_handler(int mbutt, int x, int y, void *md_ptr);
-void	  set_key_dir(t_my_data *md, int *dirx, int *diry);
+int		is_control_key(int key);
+int		key_handler(int key, t_my_data *md);
+int		mouse_click_handler(int mbutt, int x, int y, void *md_ptr);
+void	set_key_dir(t_my_data *md, int *dirx, int *diry);
 
 /* graphics dir */
-void	  put_cross(t_my_data *md, int x, int y, int color);
-int	    put_fps(t_my_data *md, int x, int y, int color);
-void	  put_pixel(t_canvas *cdata, int x, int y, int color);
+void	put_cross(t_my_data *md, int x, int y, int color);
+int		put_fps(t_my_data *md, int x, int y, int color);
+void	put_pixel(t_canvas *cdata, int x, int y, int color);
 
 /* renderers dir */
-int	    fix_if_out_of_bound(int val, int max);
-int	    render_one_pixel_at_a_time(void *md_ptr);
-int	    render_one_pixel_at_a_time_in_a_direction_loop(void *md_ptr);
-int	    render_small_or_large_frame_at_a_time(void *md_ptr);
-void	  set_renderer(t_my_data *md);
+int		fix_if_out_of_bound(int val, int max);
+int		render_one_pixel_at_a_time(void *md_ptr);
+int		render_one_pixel_at_a_time_in_a_direction_loop(void *md_ptr);
+int		render_small_or_large_frame_at_a_time(void *md_ptr);
+void	set_renderer(t_my_data *md);
 
 #endif

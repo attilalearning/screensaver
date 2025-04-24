@@ -1,27 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color_2_argb.c                                     :+:      :+:    :+:   */
+/*   show_error.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aistok <aistok@student.42london.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/24 11:30:17 by aistok            #+#    #+#             */
-/*   Updated: 2025/04/24 11:56:19 by aistok           ###   ########.fr       */
+/*   Created: 2025/04/24 11:27:21 by aistok            #+#    #+#             */
+/*   Updated: 2025/04/24 11:33:39 by aistok           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/screensaver.h"
+#include "../include/screensaver.h"
 
-t_aRGB	color_2_argb(int aRGB)
+void	show_error(t_my_data *md)
 {
-	unsigned char	a;
-	unsigned char	r;
-	unsigned char	g;
-	unsigned char	b;
-
-	a = (aRGB >> 24) & 0xFF;
-	r = (aRGB >> 16) & 0xFF;
-	g = (aRGB >> 8) & 0xFF;
-	b = aRGB & 0xFF;
-	return ((t_aRGB){.a = a, .r = r, .g = g, .b = b});
+	if (md->exit_code == eMlxErr)
+		printf("Error initializing mlx!\n");
+	else if (md->exit_code == eMlxWinErr)
+		printf("Error initializing mlx window!\n");
+	else if (md->exit_code == eMlxImgErr)
+		printf("Error initializing mlx image!\n");
 }
