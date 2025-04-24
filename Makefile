@@ -136,5 +136,4 @@ re: fclean all
 		clean \
 		fclean \
 		re \
-		git_submodules \
-		ensure_submod_repo_is_cloned hello
+		git_submodules
