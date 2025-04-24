@@ -1,14 +1,15 @@
-CC									=	cc
+CC								=	cc
 CFLAGS							=	-Wall -Wextra -Werror -g
 VFLAGS							=	--leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt
-AR									=	ar rcs
-RM									=	rm -f
+AR								=	ar rcs
+RM								=	rm -f
 RM_DIR							=	rm -rf
+MK_QUIET						=	--no-print-directory
 
-$(eval CURR_DIR			=	$(shell pwd))
+$(eval CURR_DIR					=	$(shell pwd))
 
 BIN_DIR							=	./bin
-NAME								=	$(BIN_DIR)/screensaver
+NAME							=	$(BIN_DIR)/screensaver
 
 LIB_DIR							= ./lib
 
@@ -19,19 +20,19 @@ MLX_DIR							=	$(LIB_DIR)/mlx_linux
 LIBMLX_A						=	$(MLX_DIR)/libmlx.a
 
 SRCS_DIR						=	./srcs
-SRCS_COLORS_DIR			=	$(SRCS_DIR)/colors
-SRCS_CONTROLS_DIR		=	$(SRCS_DIR)/controls
-SRCS_GRAPHICS_DIR		=	$(SRCS_DIR)/graphics
-SRCS_RENDERERS_DIR	=	$(SRCS_DIR)/renderers
-ALL_SRCS_DIRS				=	$(SRCS_DIR) \
-											$(SRCS_COLORS_DIR) \
-											$(SRCS_CONTROLS_DIR) \
-											$(SRCS_GRAPHICS_DIR) \
-											$(SRCS_RENDERERS_DIR)
+SRCS_COLORS_DIR					=	$(SRCS_DIR)/colors
+SRCS_CONTROLS_DIR				=	$(SRCS_DIR)/controls
+SRCS_GRAPHICS_DIR				=	$(SRCS_DIR)/graphics
+SRCS_RENDERERS_DIR				=	$(SRCS_DIR)/renderers
+ALL_SRCS_DIRS					=	$(SRCS_DIR) \
+									$(SRCS_COLORS_DIR) \
+									$(SRCS_CONTROLS_DIR) \
+									$(SRCS_GRAPHICS_DIR) \
+									$(SRCS_RENDERERS_DIR)
 
 OBJS_DIR						=	./obj
 
-SRCS_FILES					=	\
+SRCS_FILES						=	\
 				$(addprefix $(SRCS_DIR)/, \
 					cleanup.c \
 					init.c \
@@ -80,16 +81,26 @@ $(OBJS_DIR):
 	mkdir -p $(OBJS_DIR) \
 		$(subst $(SRCS_DIR)/,$(OBJS_DIR)/,$(ALL_SRCS_DIRS))
 
-$(LIBFT_A): | $(LIB_DIR)
-	$(MAKE) -C $(LIBFT_DIR)
+$(LIBFT_A): FORCE
+	@$(MAKE) $(MK_QUIET) SUBMOD=$(LIBFT_DIR) git_submodules
+	@$(MAKE) $(MK_QUIET) -C $(LIBFT_DIR)
 
-$(LIBMLX_A): | $(LIB_DIR)
-	cd $(MLX_DIR); ./configure
-	$(MAKE) -C $(MLX_DIR)
+$(LIBMLX_A): FORCE
+	@$(MAKE) $(MK_QUIET) SUBMOD=$(MLX_DIR) git_submodules
+	@cd $(MLX_DIR); ./configure
+	@$(MAKE) $(MK_QUIET) -C $(MLX_DIR)
 
-$(LIB_DIR):
-	mkdir -p $(LIBFT_DIR) $(MLX_DIR)
-	git submodule update --init --recursive
+git_submodules:
+	@if [ ! -f $(SUBMOD)/Makefile ]; then \
+		echo "[GIT]: Cloning $(SUBMOD)"; \
+		git submodule update $(SUBMOD); \
+		echo "[GIT]: Submodule $(SUBMOD) cloned."; \
+	else \
+		echo "[GIT]: Sub-module $(SUBMOD) is present."; \
+	fi
+#	git submodule update --init --recursive
+
+FORCE:
 
 valgrind:
 	valgrind $(VFLAGS) ./$(NAME)
@@ -101,10 +112,10 @@ else
 	@echo Refusing to delete/clear OBJS_DIR as it is \"$(OBJS_DIR)\"\ !
 endif
 	if [ -d $(LIBFT_DIR) ]; then \
-	$(MAKE) -C $(LIBFT_DIR) clean; \
+		$(MAKE) $(MK_QUIET) -C $(LIBFT_DIR) clean; \
 	fi
 	if [ -d $(MLX_DIR) ]; then \
-	cd $(MLX_DIR); ./configure clean; \
+		cd $(MLX_DIR); ./configure clean; \
 	fi
 
 fclean: clean
@@ -115,10 +126,15 @@ else
 endif
 	$(RM) $(NAME)
 	if [ -d $(LIBFT_DIR) ]; then \
-	$(MAKE) -C $(LIBFT_DIR) fclean; \
+		$(MAKE) $(MK_QUIET) -C $(LIBFT_DIR) fclean; \
 	fi
 #	$(MAKE) -C $(MLX_DIR) fclean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all \
+		clean \
+		fclean \
+		re \
+		git_submodules \
+		ensure_submod_repo_is_cloned hello
